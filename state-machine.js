@@ -50,37 +50,36 @@ StateMachine = {
     return fsm;
 
   },
+  
 
   //===========================================================================
+  
+  _doFunc: function(name, from, to, args) {
+    for (var name in arguments.slice(4)) {
+      if (this[name]) {
+        return this[name].apply(this, [name, from, to].concat(args));
+      }
+    }  
+  },
 
   beforeEvent: function(name, from, to, args) {
-    var func = this['onbefore' + name];
-    if (func)
-      return func.apply(this, [name, from, to].concat(args));
+    return _doFunc(name,from,to,args, 'onbefore' + name);
   },
 
   afterEvent: function(name, from, to, args) {
-    var func = this['onafter'  + name] || this['on' + name];
-    if (func)
-      return func.apply(this, [name, from, to].concat(args));
+    return _doFunc(name,from,to,args, 'onafter' + name, 'on' + name);
   },
 
   leaveState: function(name, from, to, args) {
-    var func = this['onleave' + from];
-    if (func)
-      return func.apply(this, [name, from, to].concat(args));
+    return _doFunc(name,from,to,args, 'onleave' + from);
   },
 
   enterState: function(name, from, to, args) {
-    var func = this['onenter' + to] || this['on' + to];
-    if (func)
-      return func.apply(this, [name, from, to].concat(args));
+    return _doFunc(name,from,to,args, 'onenter' + to, 'on' + to);
   },
 
   changeState: function(name, from, to, args) {
-    var func = this['onchangestate'];
-    if (func)
-      return func.apply(this, [name, from, to].concat(args));
+    return _doFunc(name,from,to,args, 'onchangestate');
   },
 
   buildEvent: function(name, map) {

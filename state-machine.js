@@ -54,35 +54,29 @@ StateMachine = {
 
   //===========================================================================
   
-  _doFunc: function(args) {
-    for (var name in arguments.slice(1)) {
-      if (this[name]) {
-        return this[name].apply(this, args.slice(0,3).concat(args[3]));
+  // These functions all take the arguments [name, from, to] and an optional 4th argument
+  // which is an array or values to be applied on the function as additional arguments
+  _do: function(args) {
+    for (var i = 1;i < arguments.length;i++) {
+      if (this[arguments[i]]) {
+        return this[arguments[i]].apply(this, args.slice(0,3).concat(args[3]));
       }
     }
   },
-  
-  // These functions all take the arguments [name, from, to] and an optional 4th argument
-  // which is an array or values to be applied on the function as additional arguments
-
   beforeEvent: function(name) {
-    return _doFunc(arguments, 'onbefore' + name);
+    return StateMachine._do(arguments, 'onbefore' + name);
   },
-
   afterEvent: function(name) {
-    return _doFunc(arguments, 'onafter' + name, 'on' + name);
+    return StateMachine._do(arguments, 'onafter' + name, 'on' + name);
   },
-
   leaveState: function(name, from) {
-    return _doFunc(arguments, 'onleave' + from);
+    return StateMachine._do(arguments, 'onleave' + from);
   },
-
   enterState: function(name, from, to) {
-    return _doFunc(arguments, 'onenter' + to, 'on' + to);
+    return StateMachine._do(arguments, 'onenter' + to, 'on' + to);
   },
-
   changeState: function() {
-    return _doFunc(arguments, 'onchangestate');
+    return StateMachine._do(arguments, 'onchangestate');
   },
 
   buildEvent: function(name, map) {
